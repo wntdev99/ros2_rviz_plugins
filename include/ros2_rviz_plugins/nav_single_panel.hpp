@@ -25,6 +25,7 @@
 #include "rviz_common/panel.hpp"
 #include "w_behavior_tree_interfaces/action/nav_single.hpp"
 
+class QCheckBox;
 class QComboBox;
 class QDoubleSpinBox;
 class QLabel;
@@ -89,6 +90,7 @@ private:
 
   // Widgets
   QLabel * goal_label_{nullptr};
+  QCheckBox * auto_send_checkbox_{nullptr};
   QComboBox * recovery_combo_{nullptr};
   QDoubleSpinBox * tol_spin_{nullptr};
   QSpinBox * timeout_spin_{nullptr};

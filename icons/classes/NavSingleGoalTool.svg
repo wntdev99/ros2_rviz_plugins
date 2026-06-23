@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- 단일 목표(target) 과녁 -->
+  <circle cx="42" cy="32" r="17" fill="none" stroke="#2ecc71" stroke-width="4"/>
+  <circle cx="42" cy="32" r="8"  fill="none" stroke="#2ecc71" stroke-width="4"/>
+  <circle cx="42" cy="32" r="3"  fill="#2ecc71"/>
+  <!-- 목표로 향하는 화살표 (즉시 전송 강조) -->
+  <line x1="3" y1="32" x2="30" y2="32" stroke="#e74c3c" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="27,23 43,32 27,41" fill="#e74c3c"/>
+</svg>

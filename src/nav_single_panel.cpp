@@ -7,6 +7,7 @@
 #include <memory>
 #include <string>
 
+#include <QCheckBox>
 #include <QComboBox>
 #include <QDoubleSpinBox>
 #include <QFormLayout>
@@ -59,6 +60,11 @@ NavSinglePanel::NavSinglePanel(QWidget * parent)
   form->addRow("timeout_ms", timeout_spin_);
 
   layout->addLayout(form);
+
+  // 클릭(툴) 시 패널의 Send 를 거치지 않고 곧바로 목표 전송.
+  auto_send_checkbox_ = new QCheckBox("클릭 시 자동 전송 (auto-send on click)");
+  auto_send_checkbox_->setChecked(true);
+  layout->addWidget(auto_send_checkbox_);
 
   // --- 버튼 ---
   auto * btn_layout = new QHBoxLayout;
@@ -133,7 +139,8 @@ void NavSinglePanel::onSendClicked()
     status_label_->setText("목표 pose가 없습니다. 먼저 'Nav Single Goal' 도구로 클릭하세요.");
     return;
   }
-  if (!action_client_->wait_for_action_server(std::chrono::seconds(1))) {
+  // 자동 전송에서 매 클릭마다 UI 가 멈추지 않도록 짧게만 대기한다.
+  if (!action_client_->wait_for_action_server(std::chrono::milliseconds(200))) {
     status_label_->setText("'/nav_single' 액션 서버를 찾을 수 없습니다 (서버 미가동?).");
     return;
   }
@@ -210,6 +217,10 @@ void NavSinglePanel::onCancelClicked()
 void NavSinglePanel::onGoalReceived(const QString & text)
 {
   goal_label_->setText(text);
+  // 자동 전송 모드: 메인(Qt) 스레드에서 호출되므로 위젯 값 접근이 안전하다.
+  if (auto_send_checkbox_->isChecked()) {
+    onSendClicked();
+  }
 }
 
 void NavSinglePanel::onFeedbackReceived(const QString & text)

@@ -30,6 +30,8 @@ void NavSingleGoalTool::onInitialize()
 {
   PoseTool::onInitialize();
   setName("Nav Single Goal");
+  setIcon(rviz_common::loadPixmap(
+      "package://ros2_rviz_plugins/icons/classes/NavSingleGoalTool.svg"));
   node_ = context_->getRosNodeAbstraction().lock()->get_raw_node();
   updateTopic();
 }
