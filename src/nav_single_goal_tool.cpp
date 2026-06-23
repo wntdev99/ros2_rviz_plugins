@@ -42,7 +42,7 @@ void NavSingleGoalTool::updateTopic()
     return;
   }
   publisher_ = node_->create_publisher<geometry_msgs::msg::PoseStamped>(
-    topic_property_->getStdString(), rclcpp::QoS(1));
+    topic_property_->getStdString(), rclcpp::QoS(5));
 }
 
 void NavSingleGoalTool::onPoseSet(double x, double y, double theta)

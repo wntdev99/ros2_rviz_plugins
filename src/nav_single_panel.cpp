@@ -106,7 +106,7 @@ void NavSinglePanel::onInitialize()
   action_client_ = rclcpp_action::create_client<NavSingle>(node_, action_name_);
 
   goal_sub_ = node_->create_subscription<geometry_msgs::msg::PoseStamped>(
-    goal_topic_, rclcpp::QoS(1),
+    goal_topic_, rclcpp::QoS(5),
     std::bind(&NavSinglePanel::goalPoseCallback, this, std::placeholders::_1));
 }
 
@@ -159,6 +159,9 @@ void NavSinglePanel::onSendClicked()
       {
         std::lock_guard<std::mutex> lk(handle_mutex_);
         goal_handle_ = handle;
+        if (handle) {
+          active_goal_id_ = handle->get_goal_id();
+        }
       }
       Q_EMIT goalResponded(static_cast<bool>(handle));
     };
@@ -173,6 +176,11 @@ void NavSinglePanel::onSendClicked()
 
   options.result_callback =
     [this](const GoalHandle::WrappedResult & result) {
+      bool is_current;
+      {
+        std::lock_guard<std::mutex> lk(handle_mutex_);
+        is_current = (result.goal_id == active_goal_id_);
+      }
       QString text;
       switch (result.code) {
         case rclcpp_action::ResultCode::SUCCEEDED:
@@ -190,7 +198,7 @@ void NavSinglePanel::onSendClicked()
           text = "결과: 알 수 없음 (UNKNOWN)";
           break;
       }
-      Q_EMIT resultReceived(text);
+      Q_EMIT resultReceived(text, is_current);
     };
 
   action_client_->async_send_goal(goal, options);
@@ -228,13 +236,19 @@ void NavSinglePanel::onFeedbackReceived(const QString & text)
   feedback_label_->setText(text);
 }
 
-void NavSinglePanel::onResultReceived(const QString & text)
+void NavSinglePanel::onResultReceived(const QString & text, bool is_current)
 {
+  // 이미 새 목표로 교체된 이전(preempted) 목표의 result 이면, 현재 진행 중인
+  // 목표의 UI 상태(running)나 goal_handle_ 을 건드리지 않는다.
+  if (!is_current) {
+    return;
+  }
   status_label_->setText(text);
   setRunning(false);
   {
     std::lock_guard<std::mutex> lk(handle_mutex_);
     goal_handle_.reset();
+    active_goal_id_ = rclcpp_action::GoalUUID{};
   }
 }
 

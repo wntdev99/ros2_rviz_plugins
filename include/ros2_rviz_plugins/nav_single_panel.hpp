@@ -59,7 +59,8 @@ Q_SIGNALS:
   // Emitted from ROS-thread callbacks; received on the Qt main thread.
   void goalReceived(const QString & text);
   void feedbackReceived(const QString & text);
-  void resultReceived(const QString & text);
+  // is_current=false 면 이미 교체된 이전(preempted) 목표의 결과이므로 UI 상태를 바꾸지 않는다.
+  void resultReceived(const QString & text, bool is_current);
   void goalResponded(bool accepted);
 
 private Q_SLOTS:
@@ -67,7 +68,7 @@ private Q_SLOTS:
   void onCancelClicked();
   void onGoalReceived(const QString & text);
   void onFeedbackReceived(const QString & text);
-  void onResultReceived(const QString & text);
+  void onResultReceived(const QString & text, bool is_current);
   void onGoalResponded(bool accepted);
 
 private:
@@ -84,6 +85,9 @@ private:
 
   std::mutex handle_mutex_;
   GoalHandle::SharedPtr goal_handle_;
+  // 가장 최근에 수락된 목표의 id. result_callback 이 stale(preempted) 결과인지
+  // 판별하는 데 사용한다. handle_mutex_ 로 보호.
+  rclcpp_action::GoalUUID active_goal_id_{};
 
   std::string action_name_{"/nav_single"};
   std::string goal_topic_{"/nav_single/goal_pose"};
