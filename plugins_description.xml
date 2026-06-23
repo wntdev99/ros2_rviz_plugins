@@ -1,0 +1,21 @@
+<library path="ros2_rviz_plugins">
+  <class name="ros2_rviz_plugins/NavSinglePanel"
+         type="ros2_rviz_plugins::NavSinglePanel"
+         base_class_type="rviz_common::Panel">
+    <description>
+      Panel that sends goals to the /nav_single action
+      (w_behavior_tree_interfaces/action/NavSingle). Subscribes to the goal
+      pose published by NavSingleGoalTool and lets the user trigger / cancel
+      the action with selected recovery_mode, pass_final_goal_tol, timeout_ms.
+    </description>
+  </class>
+  <class name="ros2_rviz_plugins/NavSingleGoalTool"
+         type="ros2_rviz_plugins::NavSingleGoalTool"
+         base_class_type="rviz_common::Tool">
+    <description>
+      Click tool that publishes the selected goal pose to a private topic
+      (default /nav_single/goal_pose) for NavSinglePanel. Isolated from nav2
+      GoalTool and the 2D Goal Pose tool to avoid triggering other actions.
+    </description>
+  </class>
+</library>

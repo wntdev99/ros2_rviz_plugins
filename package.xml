@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>ros2_rviz_plugins</name>
+  <version>0.1.0</version>
+  <description>
+    RViz2 GUI plugins. NavSinglePanel sends goals to the /nav_single action
+    (w_behavior_tree_interfaces/action/NavSingle) served by
+    w_behavior_tree::NavSingleNavigator. A dedicated NavSingleGoalTool
+    publishes the clicked goal pose to a private topic (/nav_single/goal_pose)
+    so the input path is fully isolated from nav2's Navigation 2 panel and
+    GoalTool. See README for design notes.
+  </description>
+
+  <maintainer email="jeongmin.choi@wattrobotics.ai">Jeongmin Choi</maintainer>
+  <license>BSD-3-Clause</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_ros</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>rclcpp_action</depend>
+  <depend>pluginlib</depend>
+  <depend>rviz_common</depend>
+  <depend>rviz_rendering</depend>
+  <depend>rviz_default_plugins</depend>
+  <depend>geometry_msgs</depend>
+  <depend>tf2</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>w_behavior_tree_interfaces</depend>
+  <depend>qtbase5-dev</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+    <rviz plugin="${prefix}/plugins_description.xml"/>
+  </export>
+</package>
